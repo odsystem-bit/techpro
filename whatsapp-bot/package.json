@@ -1,0 +1,20 @@
+{
+  "name": "tpf-whatsapp-bot",
+  "version": "1.0.0",
+  "description": "IA WhatsApp pour Tech Pro Futur - vente, conseil, relance et reporting",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "followup": "node src/cron/followup-runner.js"
+  },
+  "dependencies": {
+    "twilio": "^5.3.0",
+    "openai": "^4.67.0",
+    "express": "^4.19.2",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^3.3.2",
+    "node-cron": "^3.0.3"
+  }
+}
