@@ -1,0 +1,92 @@
+# ============================================
+# Tech Pro Futur - Configuration Production Sécurisée
+# ============================================
+
+# Activer le moteur de réécriture
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Gérer l'en-tête Authorization (pour API JWT/Bearer)
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Gérer l'en-tête X-XSRF-Token
+    RewriteCond %{HTTP:x-xsrf-token} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+    # Redirection des slashes finaux
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Tout rediriger vers index.php (Front Controller Laravel)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# ============================================
+# PROTECTIONS DE SÉCURITÉ
+# ============================================
+
+# Désactiver l'affichage des répertoires
+Options -Indexes
+
+# Empêcher l'accès aux fichiers .env, .git, etc.
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "(\.env|\.env\.example|\.gitignore|composer\.json|composer\.lock|package\.json|package-lock\.json|README\.md)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Empêcher l'accès au dossier storage
+<IfModule mod_rewrite.c>
+    RewriteRule ^storage/ - [F,L]
+</IfModule>
+
+# Headers de sécurité (en complément du middleware PHP)
+<IfModule mod_headers.c>
+    # Protection contre le clickjacking
+    Header always set X-Frame-Options "DENY"
+    
+    # Protection XSS
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Empêcher le MIME sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Permissions Policy (anciennement Feature-Policy)
+    Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+    
+    # Content Security Policy (CSP) - Doit correspondre au middleware PHP
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com https://unpkg.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.moneroo.io https://api.feexpay.me; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+    
+    # HSTS (forcer HTTPS) - Décommenter après test HTTPS OK
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>
+
+# Encodage par défaut
+AddDefaultCharset UTF-8
+
+# Désactiver l'exécution de scripts dans les dossiers uploads
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_URI} ^/storage/.*\.(php|php\.|php3|php4|php5|phtml|pl|py|jsp|asp|aspx|cgi|sh|bash)$ [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# Bloquer l'accès aux fichiers sensibles par extension
+<FilesMatch "\.(env|log|sql|sqlite|git|gitignore|gitattributes|md|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

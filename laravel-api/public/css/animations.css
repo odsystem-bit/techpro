@@ -1,0 +1,22 @@
+/* ===== ANIMATIONS ===== */
+
+@keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-left {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pop-in {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.animate-fade-in-up  { animation: fade-in-up 0.6s ease-out both; }
+.animate-fade-in-left { animation: fade-in-left 0.7s ease-out both; }
+.animate-pop-in       { animation: pop-in 0.5s ease-out both; }
