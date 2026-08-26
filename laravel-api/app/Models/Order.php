@@ -57,12 +57,12 @@ class Order extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'orderable_id')->where('orderable_type', Product::class);
+        return $this->belongsTo(Product::class, 'orderable_id');
     }
 
     public function pack()
     {
-        return $this->belongsTo(Pack::class, 'orderable_id')->where('orderable_type', Pack::class);
+        return $this->belongsTo(Pack::class, 'orderable_id');
     }
 
     public function isPaid(): bool
@@ -95,6 +95,8 @@ class Order extends Model
 
     public function isEbookOrder(): bool
     {
-        return $this->product && $this->product->product_type === 'ebook';
+        return $this->orderable_type === Product::class
+            && $this->product
+            && $this->product->product_type === 'ebook';
     }
 }

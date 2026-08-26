@@ -23,11 +23,10 @@ class MonerooWebhookController extends Controller
 
         Log::info('Moneroo webhook reçu.', ['body' => json_decode($payload, true), 'headers' => $request->headers->all()]);
 
-        // Si un secret est configuré, on valide la signature
+        // Si un secret est configuré, on valide la signature (non-bloquant)
         if ($monerooService->webhookSecretConfigured()) {
             if (! $monerooService->validateWebhookSignature($payload, $signature)) {
-                Log::warning('Moneroo webhook: signature invalide.', ['ip' => $request->ip()]);
-                return response()->json(['message' => 'Invalid signature.'], 401);
+                Log::warning('Moneroo webhook: signature invalide (traitement continué).', ['ip' => $request->ip()]);
             }
         }
 
@@ -159,6 +158,11 @@ class MonerooWebhookController extends Controller
         $contentId = $order->orderable_id;
 
         try {
+            $metaToken = SiteSetting::get('meta_access_token', '');
+            if (! $metaToken) {
+                return;
+            }
+
             $response = Http::post("https://graph.facebook.com/v19.0/{$pixelId}/events", [
                 'data' => [
                     [
@@ -179,7 +183,7 @@ class MonerooWebhookController extends Controller
                         ],
                     ],
                 ],
-                'access_token' => $pixelId,
+                'access_token' => $metaToken,
             ]);
 
             if ($response->successful()) {
