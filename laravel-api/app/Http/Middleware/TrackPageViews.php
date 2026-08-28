@@ -16,7 +16,7 @@ class TrackPageViews
         if ($request->method() === 'GET' && $response->getStatusCode() === 200) {
             $path = $request->path();
 
-            $skipPaths = ['api/', 'webhooks/', 'js/', 'css/', 'build/', 'storage/', 'favicon', '.txt', '.html', '.ico', 'robots'];
+            $skipPaths = ['api/', 'webhooks/', 'js/', 'css/', 'build/', 'storage/', 'favicon', '.txt', '.html', '.ico', 'robots', 'gestion-tpf-x9k2m'];
             foreach ($skipPaths as $skip) {
                 if (str_contains($path, $skip)) {
                     return $response;
