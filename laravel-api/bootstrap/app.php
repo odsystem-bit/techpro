@@ -29,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Middlewares web spécifiques
         $middleware->web(append: [
             \App\Http\Middleware\SecurityLockout::class,
+            \App\Http\Middleware\TrackPageViews::class,
         ]);
         
         $middleware->validateCsrfTokens(except: [

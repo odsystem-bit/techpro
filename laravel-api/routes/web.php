@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\PackAdminController;
 use App\Http\Controllers\Admin\FormationAdminController;
+use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Shop\OdibotController;
 
 // ── Shop public ──────────────────────────────────────────────────────────────
@@ -121,6 +122,8 @@ Route::prefix('gestion-tpf-x9k2m')->name('admin.')->group(function () {
             Route::get('/', [OrderAdminController::class, 'index'])->name('index');
             Route::get('/{order}', [OrderAdminController::class, 'show'])->name('show');
         });
+
+        Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
 
         Route::get('/home', [HomePageController::class, 'edit'])->name('home.edit');
         Route::post('/home', [HomePageController::class, 'update'])->name('home.update');
